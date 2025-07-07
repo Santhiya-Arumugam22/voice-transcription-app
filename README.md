@@ -34,6 +34,8 @@ This is a simple and powerful web app built with **Flask** that helps you **conv
 - `mammoth`
 - `pdfminer.six`
 
+![voice_to_text](https://github.com/user-attachments/assets/83a1f545-c200-4bd2-9f7b-750eee766636)
+![text_to_voice](https://github.com/user-attachments/assets/78c74bc5-47c2-4a76-8d66-fb22960e4150)
 
 
 ## ⚡ How to run
