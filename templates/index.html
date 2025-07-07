@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Voice/Text Transcription App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4ff;
+      color: #333;
+    }
+
+    body.dark-mode {
+      background: #1f2937;
+      color: #eee;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: #dbeafe;
+    }
+
+    body.dark-mode .header {
+      background: #374151;
+    }
+
+    .header-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #3b82f6;
+    }
+
+    body.dark-mode .header-title {
+      color: #93c5fd;
+    }
+
+    .header button {
+      font-size: 14px;
+      padding: 4px 8px;
+      border: none;
+      border-radius: 4px;
+      background: #93c5fd;
+      color: white;
+      cursor: pointer;
+    }
+
+    .header button:hover {
+      background: #60a5fa;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 10px auto;
+      padding: 10px;
+    }
+
+    h2 {
+      color: #3b82f6;
+    }
+
+    body.dark-mode h2 {
+      color: #93c5fd;
+    }
+
+    textarea, input[type="file"], select {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 8px;
+      border: 1px solid #c7d2fe;
+    }
+
+    body.dark-mode textarea,
+    body.dark-mode input[type="file"],
+    body.dark-mode select {
+      background: #374151;
+      color: #eee;
+      border: 1px solid #4b5563;
+    }
+
+    textarea {
+      height: 120px;
+      resize: none;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0;
+    }
+
+    .button-row button {
+      background: #a5b4fc;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .button-row button:hover {
+      background: #818cf8;
+    }
+
+    body.dark-mode .button-row button {
+      background: #6366f1;
+    }
+
+    body.dark-mode .button-row button:hover {
+      background: #4f46e5;
+    }
+
+    .section {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #c7d2fe;
+      border-radius: 8px;
+    }
+
+    body.dark-mode .section {
+      border: 1px solid #4b5563;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title">Voice/Text Transcription App</div>
+    <button id="toggle-mode">🌙</button>
+  </div>
+
+  <div class="container">
+
+    <!-- Voice to Text Section -->
+    <div class="section">
+      <h2>🎤 Voice to Text</h2>
+      <select id="language">
+        <option value="en-US">English (US)</option>
+        <option value="hi-IN">Hindi</option>
+        <option value="ta-IN">Tamil</option>
+        <option value="te-IN">Telugu</option>
+        <option value="kn-IN">Kannada</option>
+      </select>
+      <textarea id="transcript" placeholder="Your transcription will appear here..."></textarea>
+      <div class="button-row">
+        <button id="start">Start</button>
+        <button id="pause-resume">Pause</button>
+        <button id="stop">Stop</button>
+        <button id="save">Save</button>
+        <button id="clear">Clear</button>
+      </div>
+      <p id="status">Status: Stopped</p>
+      <p id="word-count">Word count: 0</p>
+    </div>
+
+    <!-- Upload Files Section -->
+    <div class="section">
+      <h2>📄 Upload PDF / Word / Image</h2>
+      <input type="file" id="file-upload" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" />
+      <div class="button-row">
+        <button id="upload-file-btn">Upload & Transcribe</button>
+      </div>
+    </div>
+
+    <!-- Text to Voice Section -->
+    <div class="section">
+      <h2>🗣️ Text to Voice</h2>
+      <textarea id="tts-text" placeholder="Enter text to speak..."></textarea>
+      <div class="button-row">
+        <button id="speak">Speak</button>
+        <button id="stop-speak">Stop Speaking</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition;
+    let isRunning = false;
+
+    const transcriptArea = document.getElementById('transcript');
+    const pauseResumeBtn = document.getElementById('pause-resume');
+    const status = document.getElementById('status');
+    const wordCount = document.getElementById('word-count');
+
+    function updateWordCount() {
+      const words = transcriptArea.value.trim().split(/\s+/).filter(Boolean);
+      wordCount.textContent = `Word count: ${words.length}`;
+    }
+
+    function createRecognition() {
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.lang = document.getElementById('language').value;
+
+      recognition.onresult = (event) => {
+        let currentText = transcriptArea.value;
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          currentText += event.results[i][0].transcript + ' ';
+        }
+        transcriptArea.value = currentText;
+        updateWordCount();
+      };
+
+      recognition.onend = () => {
+        if (isRunning) recognition.start();
+        else status.textContent = "Status: Stopped";
+      };
+
+      recognition.onerror = (e) => {
+        console.error("Error: ", e.error);
+      };
+    }
+
+    document.getElementById('toggle-mode').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+
+    document.getElementById('start').addEventListener('click', () => {
+      if (!recognition) createRecognition();
+      recognition.start();
+      isRunning = true;
+      pauseResumeBtn.textContent = 'Pause';
+      status.textContent = "Status: Listening...";
+    });
+
+    pauseResumeBtn.addEventListener('click', () => {
+      if (!isRunning) {
+        recognition.start();
+        isRunning = true;
+        pauseResumeBtn.textContent = 'Pause';
+        status.textContent = "Status: Listening...";
+      } else {
+        recognition.stop();
+        isRunning = false;
+        pauseResumeBtn.textContent = 'Resume';
+        status.textContent = "Status: Paused";
+      }
+    });
+
+    document.getElementById('stop').addEventListener('click', () => {
+      if (recognition) recognition.stop();
+      isRunning = false;
+      pauseResumeBtn.textContent = 'Pause';
+      status.textContent = "Status: Stopped";
+    });
+
+    document.getElementById('clear').addEventListener('click', () => {
+      transcriptArea.value = "";
+      updateWordCount();
+    });
+
+    document.getElementById('save').addEventListener('click', () => {
+      const text = transcriptArea.value.trim();
+      if (!text) {
+        alert("No text to save!");
+        return;
+      }
+      fetch("/save", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({transcript: text})
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          alert("Saved as: " + data.filename);
+        } else {
+          alert("Save failed: " + data.message);
+        }
+      });
+    });
+
+    // Text to Speech
+    document.getElementById('speak').addEventListener('click', () => {
+      const text = document.getElementById('tts-text').value.trim();
+      if (!text) {
+        alert("Enter text to speak!");
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = document.getElementById('language').value;
+      window.speechSynthesis.speak(utterance);
+    });
+
+    document.getElementById('stop-speak').addEventListener('click', () => {
+      window.speechSynthesis.cancel();
+    });
+
+    // File upload placeholder (implement backend endpoint)
+    document.getElementById('upload-file-btn').addEventListener('click', () => {
+      const file = document.getElementById('file-upload').files[0];
+      if (!file) {
+        alert("Please select a file!");
+        return;
+      }
+      alert("This will send file to backend for transcription (endpoint needed).");
+      // TODO: Implement fetch call to upload file to server
+    });
+
+  </script>
+</body>
+</html>

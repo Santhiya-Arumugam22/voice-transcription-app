@@ -1,0 +1,127 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f9fbfd;
+  color: #333;
+}
+
+body.dark-mode {
+  background: #1f2937;
+  color: #eee;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: #dbeafe;
+}
+
+body.dark-mode .header {
+  background: #374151;
+}
+
+#toggle-mode {
+  font-size: 14px;
+  padding: 4px 6px;
+  border: none;
+  border-radius: 4px;
+  background: #93c5fd;
+  color: #fff;
+  cursor: pointer;
+}
+
+#toggle-mode:hover {
+  background: #60a5fa;
+}
+
+.container {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 10px;
+}
+
+h1 {
+  text-align: center;
+  color: #3b82f6;
+}
+
+select, textarea, input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0 10px;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.button-row button,
+#upload-transcribe {
+  padding: 8px 12px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.button-row button:hover,
+#upload-transcribe:hover {
+  background: #2563eb;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #c9d9ff;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 10px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+body.dark-mode select,
+body.dark-mode textarea,
+body.dark-mode input[type="file"] {
+  background: #374151;
+  color: #eee;
+  border: 1px solid #4b5563;
+}
+
+body.dark-mode button,
+body.dark-mode #upload-transcribe {
+  background: #6366f1;
+}
+
+body.dark-mode button:hover,
+body.dark-mode #upload-transcribe:hover {
+  background: #4f46e5;
+}
