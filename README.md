@@ -11,7 +11,7 @@ This is a simple and powerful web app built with **Flask** that helps you **conv
 - **Switch between light and dark mode for comfort**
 - **Track word counts as you go**
 
----
+
 
 ## 🚀 What can it do?
 
@@ -23,7 +23,7 @@ This is a simple and powerful web app built with **Flask** that helps you **conv
 ✅ **Dark mode** — Switch between light and dark themes to suit your eyes  
 ✅ **Live word count** — See how many words you’ve transcribed  
 
----
+
 
 ## 🛠 Requirements
 
@@ -34,7 +34,7 @@ This is a simple and powerful web app built with **Flask** that helps you **conv
 - `mammoth`
 - `pdfminer.six`
 
----
+
 
 ## ⚡ How to run
 
